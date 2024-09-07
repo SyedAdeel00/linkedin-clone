@@ -1,13 +1,11 @@
 <template>
   <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
     <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-2xl space-y-4">
-      <!-- Title with visibility and styling -->
       <h2 class="text-3xl font-extrabold text-blue-600 mb-6 text-center drop-shadow-lg">
         <span class="pi pi-linkedin mr-2"></span>Feed
       </h2>
 
       <div class="flex justify-between mb-4">
-        <!-- Buttons for navigation -->
         <button
           @click="navigateToCreatePost"
           class="bg-yellow-500 text-black font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300"
@@ -22,18 +20,15 @@
         </button>
       </div>
 
-      <!-- No posts message -->
       <div v-if="posts.length === 0" class="text-center text-gray-600">
         No posts yet.
       </div>
 
-      <!-- Post list -->
       <div v-else class="space-y-4">
         <div v-for="(post, index) in posts" :key="index" class="bg-gray-100 border border-gray-300 p-4 rounded-lg shadow">
           <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ post.title }}</h3>
           <p class="text-gray-600">{{ post.content }}</p>
-          
-          <!-- Line above like and comment section -->
+
           <hr class="my-4 border-gray-300" />
 
           <div class="flex justify-between items-center">
@@ -51,8 +46,7 @@
             </div>
           </div>
 
-          <!-- Comment section -->
-          <div v-if="post.showComments" class="mt-4 border-t border-gray-300 pt-4">
+          <div v-if="post.comments.length > 0" class="mt-4 border-t border-gray-300 pt-4">
             <div v-for="(comment, idx) in post.comments" :key="idx" class="p-2 bg-gray-200 rounded mb-2">
               <p class="text-gray-700">{{ comment }}</p>
             </div>
@@ -61,7 +55,6 @@
       </div>
     </div>
 
-    <!-- Comment dialog -->
     <dialog id="commentDialog" class="rounded-lg p-4 shadow-lg">
       <h3 class="text-xl font-semibold mb-4">Add Comment</h3>
       <textarea v-model="newComment" rows="4" class="w-full p-2 border rounded mb-4" placeholder="Type your comment here..."></textarea>
@@ -86,7 +79,6 @@ const router = useRouter();
 
 const posts = store.posts;
 
-// Open comment dialog
 const openCommentDialog = (post) => {
   const dialog = document.getElementById('commentDialog');
   if (dialog) {
@@ -95,7 +87,6 @@ const openCommentDialog = (post) => {
   }
 };
 
-// Close comment dialog
 const closeCommentDialog = () => {
   const dialog = document.getElementById('commentDialog');
   if (dialog) {
@@ -104,25 +95,23 @@ const closeCommentDialog = () => {
   }
 };
 
-// Add comment to post
 const addComment = () => {
   const dialog = document.getElementById('commentDialog');
   const postId = dialog ? dialog.dataset.postId : null;
   if (postId && newComment.value) {
-    const post = store.posts.find(p => p.id === postId);
+    const post = store.posts.find(p => p.id === parseInt(postId));
     if (post) {
       post.comments.push(newComment.value);
-      post.commentsCount = post.comments.length; // Update comments count
+      store.updatePost(post); // Update the post in the store
     }
     closeCommentDialog();
   }
 };
 
-// Toggle like functionality
 const toggleLike = (post) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
-  // Optionally, you can update the store with the new like state if needed
+  store.updatePost(post); // Update the post in the store
 };
 
 const navigateToCreatePost = () => {
@@ -133,7 +122,6 @@ const navigateToProfile = () => {
   router.push('/profile');
 };
 
-// Fetch posts on mounted
 onMounted(async () => {
   const fetchedPosts = await store.fetchPosts();
   if (fetchedPosts) {
