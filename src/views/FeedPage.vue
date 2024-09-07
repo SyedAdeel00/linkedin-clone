@@ -91,9 +91,6 @@
   </div>
 </template>
 
-
-
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -105,6 +102,7 @@ const router = useRouter();
 
 const posts = ref([
   {
+    id: 1, // Add unique ID for default posts
     title: 'Amazing Landscape',
     content: 'Check out this beautiful landscape!',
     mediaUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBpIKuCzK9AxZZkrdE5Fr_m4dKr1aPavnK6w&s',
@@ -114,6 +112,7 @@ const posts = ref([
     comments: ['Stunning view!']
   },
   {
+    id: 2, // Add unique ID for default posts
     title: 'Incredible Video',
     content: 'Watch this amazing video!',
     mediaUrl: 'https://youtu.be/tt2k8PGm-TI', // Updated URL
@@ -123,6 +122,7 @@ const posts = ref([
     comments: ['Wow, impressive!']
   },
   {
+    id: 3, // Add unique ID for default posts
     title: 'Another Beautiful Image',
     content: 'Another image to admire!',
     mediaUrl: 'https://miro.medium.com/v2/resize:fit:1200/1*udvSMrSVGOgD4fxjMJHbOw.jpeg',
@@ -133,11 +133,11 @@ const posts = ref([
   }
 ]);
 
-const openCommentDialog = (post: { id: string | undefined; }) => {
+const openCommentDialog = (post: { id: number; }) => {
   const dialog = document.getElementById('commentDialog');
   if (dialog) {
     dialog.showModal();
-    dialog.dataset.postId = post.id;
+    dialog.dataset.postId = post.id.toString();
   }
 };
 
@@ -161,7 +161,7 @@ const addComment = () => {
   }
 };
 
-const toggleLike = (post: { liked: any; likes: any; id?: number; title?: string; content?: string; comments?: string[]; }) => {
+const toggleLike = (post: { liked: boolean; likes: number; id: number; }) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
 };
@@ -181,7 +181,6 @@ onMounted(async () => {
   }
 });
 </script>
-
 
 <style scoped>
 /* Additional styling */
