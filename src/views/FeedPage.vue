@@ -25,8 +25,31 @@
       </div>
 
       <div v-else class="space-y-4">
-        <div v-for="(post, index) in posts" :key="index" class="bg-gray-100 border border-gray-300 p-4 rounded-lg shadow">
+        <div v-for="(post, index) in posts.slice().reverse()" :key="index" class="bg-gray-100 border border-gray-300 p-4 rounded-lg shadow">
           <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ post.title }}</h3>
+          <div v-if="post.type === 'image'" class="mb-2">
+            <img :src="post.mediaUrl" alt="Post media" class="w-full h-auto rounded-lg">
+          </div>
+          <div v-if="post.type === 'video'" class="mb-2">
+            <!-- Check if mediaUrl contains 'youtube.com' -->
+            <template v-if="post.mediaUrl.includes('youtu.be')">
+              <iframe
+                :src="post.mediaUrl.replace('youtu.be/', 'https://www.youtube.com/embed/')"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                class="w-full h-auto rounded-lg"
+              ></iframe>
+            </template>
+            <!-- Else use direct video URL -->
+            <template v-else>
+              <video controls class="w-full h-auto rounded-lg">
+                <source :src="post.mediaUrl" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </template>
+          </div>
+
           <p class="text-gray-600">{{ post.content }}</p>
 
           <hr class="my-4 border-gray-300" />
@@ -68,6 +91,9 @@
   </div>
 </template>
 
+
+
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -77,7 +103,35 @@ const store = useStore();
 const newComment = ref('');
 const router = useRouter();
 
-const posts = store.posts;
+const posts = ref([
+  {
+    title: 'Amazing Landscape',
+    content: 'Check out this beautiful landscape!',
+    mediaUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBpIKuCzK9AxZZkrdE5Fr_m4dKr1aPavnK6w&s',
+    type: 'image',
+    liked: false,
+    likes: 10,
+    comments: ['Stunning view!']
+  },
+  {
+    title: 'Incredible Video',
+    content: 'Watch this amazing video!',
+    mediaUrl: 'https://youtu.be/tt2k8PGm-TI', // Updated URL
+    type: 'video',
+    liked: false,
+    likes: 25,
+    comments: ['Wow, impressive!']
+  },
+  {
+    title: 'Another Beautiful Image',
+    content: 'Another image to admire!',
+    mediaUrl: 'https://miro.medium.com/v2/resize:fit:1200/1*udvSMrSVGOgD4fxjMJHbOw.jpeg',
+    type: 'image',
+    liked: false,
+    likes: 5,
+    comments: []
+  }
+]);
 
 const openCommentDialog = (post: { id: string | undefined; }) => {
   const dialog = document.getElementById('commentDialog');
@@ -99,10 +153,9 @@ const addComment = () => {
   const dialog = document.getElementById('commentDialog');
   const postId = dialog ? dialog.dataset.postId : null;
   if (postId && newComment.value) {
-    const post = store.posts.find(p => p.id === parseInt(postId));
+    const post = posts.value.find(p => p.id === parseInt(postId));
     if (post) {
       post.comments.push(newComment.value);
-      store.updatePost(post); 
     }
     closeCommentDialog();
   }
@@ -111,7 +164,6 @@ const addComment = () => {
 const toggleLike = (post: { liked: any; likes: any; id?: number; title?: string; content?: string; comments?: string[]; }) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
-  store.updatePost(post); 
 };
 
 const navigateToCreatePost = () => {
@@ -125,10 +177,11 @@ const navigateToProfile = () => {
 onMounted(async () => {
   const fetchedPosts = await store.fetchPosts();
   if (fetchedPosts) {
-    store.posts = fetchedPosts;
+    posts.value = [...posts.value, ...fetchedPosts];
   }
 });
 </script>
+
 
 <style scoped>
 /* Additional styling */
