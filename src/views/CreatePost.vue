@@ -1,10 +1,36 @@
 <template>
-  <div>
-    <h3>Create Post</h3>
-    <input v-model="title" placeholder="Title" />
-    <textarea v-model="content" placeholder="Content"></textarea>
-    <button @click="createPost">Post</button>
-    <button @click="cancel">Cancel</button>
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
+    <div class="w-full max-w-md bg-white p-6 rounded-xl shadow-2xl space-y-6">
+      <h3 class="text-2xl font-bold text-blue-500 text-center">
+        Create Post
+      </h3>
+      <input
+        v-model="title"
+        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Title"
+        type="text"
+      />
+      <textarea
+        v-model="content"
+        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Content"
+        rows="6"
+      ></textarea>
+      <div class="flex justify-between">
+        <button
+          @click="createPost"
+          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Post
+        </button>
+        <button
+          @click="cancel"
+          class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -50,5 +76,5 @@ const cancel = () => {
 </script>
 
 <style scoped>
-/* Add some styles as necessary */
+/* Add any additional styling here */
 </style>

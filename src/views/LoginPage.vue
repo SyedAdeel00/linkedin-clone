@@ -1,76 +1,83 @@
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900 flex items-center justify-center min-h-screen">
-    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-      <!-- Heading -->
-      <h1 class="text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white mb-6 text-center">
-        Sign in to your account
-      </h1>
-      <!-- Login Form -->
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
+    <div class="w-full max-w-sm bg-white p-8 rounded-xl shadow-2xl transform hover:scale-105 transition-transform">
+      <h2 class="text-3xl font-extrabold text-blue-500 mb-6 text-center drop-shadow-lg">
+        Login
+      </h2>
       <form @submit.prevent="requestOtp" class="space-y-6">
-        <!-- Phone Number Field -->
-        <div>
-          <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Phone Number</label>
-          <input
-            id="phone"
-            v-model="phone"
-            type="tel"
-            placeholder="Enter your phone number"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 transition-all duration-300 ease-in-out"
-          />
-        </div>
-        <!-- Submit Button -->
+        <input
+          v-model="phone"
+          @input="handlePhoneInputChange"
+          type="tel"
+          placeholder="Phone Number"
+          required
+          class="w-full px-4 py-3 border border-red-300 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-yellow-400"
+        />
         <button
           type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 transition-all duration-300 ease-in-out"
+          :disabled="otpRequested && !phoneChanged"
+          class="w-full bg-yellow-500 text-black font-semibold py-3 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Request OTP
         </button>
       </form>
-
-      <!-- OTP Verification -->
-      <div v-if="otpRequested" class="mt-6">
+      <div v-if="otpRequested" class="mt-8">
         <form @submit.prevent="verifyOtp" class="space-y-6">
-          <!-- OTP Field -->
-          <div>
-            <label for="otp" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Enter OTP</label>
+          <div class="relative">
             <input
-              id="otp"
               v-model="otp"
-              type="text"
+              :type="otpInputType"
               placeholder="Enter OTP"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 transition-all duration-300 ease-in-out"
+              class="w-full px-4 py-3 border border-gray-400 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-400"
             />
+            <span @click="toggleOtpVisibility" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700 cursor-pointer">
+              <i :class="otpVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </span>
           </div>
-          <!-- Submit Button -->
           <button
             type="submit"
-            class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-500 transition-all duration-300 ease-in-out"
+            class="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
           >
             Login
           </button>
         </form>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, computed } from 'vue'; 
 import { useStore } from '../store';
 import { useRouter } from 'vue-router';
 
 const phone = ref('');
 const otp = ref('');
 const otpRequested = ref(false);
+const otpVisible = ref(false);
+const phoneChanged = ref(false);
 
 const store = useStore();
 const router = useRouter();
 
+// Toggle OTP visibility
+const toggleOtpVisibility = () => {
+  otpVisible.value = !otpVisible.value;
+};
+
+const otpInputType = computed(() => otpVisible.value ? 'text' : 'password');
+
+// Handle phone input change
+const handlePhoneInputChange = () => {
+  phoneChanged.value = true;
+  otpRequested.value = false; // Reset OTP requested state when phone number changes
+};
+
 const requestOtp = () => {
   alert('OTP has been sent to your phone');
   otpRequested.value = true;
+  phoneChanged.value = false; // Once OTP is requested, disable unless phone changes
 };
 
 const verifyOtp = async () => {
@@ -85,5 +92,5 @@ const verifyOtp = async () => {
 </script>
 
 <style scoped>
-/* Optional: Add any additional scoped styling here */
+/* Optional: Add any additional styling here */
 </style>
