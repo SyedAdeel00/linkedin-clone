@@ -11,6 +11,8 @@
           type="tel"
           placeholder="Phone Number"
           required
+          maxlength = 10
+          minlength=10
           class="w-full px-4 py-3 border border-red-300 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-yellow-400"
         />
         <button
@@ -29,6 +31,8 @@
               :type="otpInputType"
               placeholder="Enter OTP"
               required
+               maxlength = 4
+               minlength=4
               class="w-full px-4 py-3 border border-gray-400 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-400"
             />
             <span @click="toggleOtpVisibility" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700 cursor-pointer">
