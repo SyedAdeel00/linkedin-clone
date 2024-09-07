@@ -86,7 +86,7 @@ const visibility = ref('public');
 const router = useRouter();
 const store = useStore(); // Initialize the store
 
-const profilePic = ref('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqW41E4-1DEcNpoV2krp581TuZ0KqU0TuM4g&s');
+const profilePic = ref('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8j2gmtU0Tti343AXGWaIMy017LUiSUtbh-Q&s');
 const userName = ref('John Doe');
 const userTitle = ref('Software Engineer');
 
