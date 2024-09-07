@@ -21,7 +21,7 @@ export const useStore = defineStore('main', () => {
     return post;
   };
 
-  const updatePost = (updatedPost) => {
+  const updatePost = (updatedPost: { id: number; title: string; content: string; likes: number; comments: Array<string>; liked?: boolean | undefined; }) => {
     const index = posts.value.findIndex(post => post.id === updatedPost.id);
     if (index !== -1) {
       posts.value[index] = updatedPost; // Update the post in the store

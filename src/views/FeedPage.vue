@@ -79,7 +79,7 @@ const router = useRouter();
 
 const posts = store.posts;
 
-const openCommentDialog = (post) => {
+const openCommentDialog = (post: { id: string | undefined; }) => {
   const dialog = document.getElementById('commentDialog');
   if (dialog) {
     dialog.showModal();
@@ -102,16 +102,16 @@ const addComment = () => {
     const post = store.posts.find(p => p.id === parseInt(postId));
     if (post) {
       post.comments.push(newComment.value);
-      store.updatePost(post); // Update the post in the store
+      store.updatePost(post); 
     }
     closeCommentDialog();
   }
 };
 
-const toggleLike = (post) => {
+const toggleLike = (post: { liked: any; likes: any; id?: number; title?: string; content?: string; comments?: string[]; }) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
-  store.updatePost(post); // Update the post in the store
+  store.updatePost(post); 
 };
 
 const navigateToCreatePost = () => {
