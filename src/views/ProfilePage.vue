@@ -76,7 +76,9 @@
 
       <!-- Tweets Section -->
       <div class="mt-6 space-y-4">
-        <h3 class="text-2xl font-semibold text-blue-600">Tweets</h3>
+        <h3 class="text-2xl font-semibold text-blue-600 flex items-center">
+          <i class="pi pi-twitter text-blue-500 text-2xl mr-2"></i> Tweets
+        </h3>
         <div v-if="tweets.length > 0">
           <div v-for="(tweet, index) in tweets" :key="index" class="border-b pb-4 mb-4">
             <p class="text-gray-700">{{ tweet.content }}</p>
