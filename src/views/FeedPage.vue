@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
     <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-2xl space-y-4">
       <h2 class="text-3xl font-extrabold text-blue-600 mb-6 text-center drop-shadow-lg">
-        <span class="pi pi-linkedin mr-2"></span>Feed
+        <span class="pi pi-linkedin mr-2" style="font-size:1.7rem;"></span>Feed
       </h2>
 
       <div class="flex justify-between mb-4">
