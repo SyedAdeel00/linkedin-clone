@@ -37,12 +37,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from '../store';
 
 const title = ref('');
 const content = ref('');
 const router = useRouter();
+const store = useStore(); // Initialize the store
 
-const createPost = () => {
+const createPost = async () => {
   if (!title.value || !content.value) {
     alert("Title and content can't be empty");
     return;
@@ -56,13 +58,8 @@ const createPost = () => {
     comments: [],
   };
 
-  // Get existing posts from local storage
-  const storedPosts = localStorage.getItem('posts');
-  const posts = storedPosts ? JSON.parse(storedPosts) : [];
-
-  // Add new post and save to local storage
-  posts.push(newPost);
-  localStorage.setItem('posts', JSON.stringify(posts));
+  // Use the store's createPost method
+  await store.createPost(newPost);
 
   // Clear form and navigate to the feed page
   title.value = '';
