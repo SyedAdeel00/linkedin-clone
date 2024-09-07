@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
     <div class="w-full max-w-sm bg-white p-8 rounded-xl shadow-2xl transform hover:scale-105 transition-transform">
       <h2 class="text-3xl font-extrabold text-blue-500 mb-6 text-center drop-shadow-lg">
-        Login
+        Login<span class="pi pi-user ml-2 " style="font-size: 1.7rem"></span>
       </h2>
       <form @submit.prevent="requestOtp" class="space-y-6">
         <input
@@ -32,7 +32,7 @@
               class="w-full px-4 py-3 border border-gray-400 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-400"
             />
             <span @click="toggleOtpVisibility" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700 cursor-pointer">
-              <i :class="otpVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              <i :class="otpVisible ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
             </span>
           </div>
           <button
@@ -92,5 +92,5 @@ const verifyOtp = async () => {
 </script>
 
 <style scoped>
-/* Optional: Add any additional styling here */
+/* Additional styling can be added here */
 </style>
