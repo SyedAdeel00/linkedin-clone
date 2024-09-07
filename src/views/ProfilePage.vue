@@ -73,6 +73,20 @@
           </li>
         </ul>
       </div>
+
+      <!-- Tweets Section -->
+      <div class="mt-6 space-y-4">
+        <h3 class="text-2xl font-semibold text-blue-600">Tweets</h3>
+        <div v-if="tweets.length > 0">
+          <div v-for="(tweet, index) in tweets" :key="index" class="border-b pb-4 mb-4">
+            <p class="text-gray-700">{{ tweet.content }}</p>
+            <p class="text-gray-500 text-sm">{{ tweet.timestamp }}</p>
+          </div>
+        </div>
+        <div v-else>
+          <p class="text-gray-500">No tweets available.</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -116,6 +130,17 @@ const education = ref([
     institution: 'University of California, Berkeley',
     years: '2014 - 2018',
     details: 'Focused on software development and data structures.'
+  }
+]);
+
+const tweets = ref([
+  {
+    content: 'Just completed a new project! Excited to share more details soon.',
+    timestamp: '2024-09-07 10:00 AM'
+  },
+  {
+    content: 'Looking forward to attending the Vue.js conference next week.',
+    timestamp: '2024-09-05 02:30 PM'
   }
 ]);
 
