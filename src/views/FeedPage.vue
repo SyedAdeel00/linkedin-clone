@@ -34,7 +34,7 @@
             <!-- Check if mediaUrl contains 'youtube.com' -->
             <template v-if="post.mediaUrl.includes('youtu.be')">
               <iframe
-                :src="post.mediaUrl.replace('youtu.be/', 'https://www.youtube.com/embed/')"
+                :src="getYouTubeEmbedUrl(post.mediaUrl)"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
@@ -78,16 +78,20 @@
       </div>
     </div>
 
-    <dialog id="commentDialog" class="rounded-lg p-4 shadow-lg">
-      <h3 class="text-xl font-semibold mb-4">Add Comment</h3>
-      <textarea v-model="newComment" rows="4" class="w-full p-2 border rounded mb-4" placeholder="Type your comment here..."></textarea>
-      <button @click="addComment" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
-        Add Comment
-      </button>
-      <button @click="closeCommentDialog" class="ml-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400">
-        Cancel
-      </button>
-    </dialog>
+    <div v-if="isCommentDialogVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white rounded-lg p-4 shadow-lg w-full max-w-md">
+        <h3 class="text-xl font-semibold mb-4">Add Comment</h3>
+        <textarea v-model="newComment" rows="4" class="w-full p-2 border rounded mb-4" placeholder="Type your comment here..."></textarea>
+        <div class="flex justify-end">
+          <button @click="addComment" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+            Add Comment
+          </button>
+          <button @click="closeCommentDialog" class="ml-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -98,11 +102,13 @@ import { useStore } from '../store';
 
 const store = useStore();
 const newComment = ref('');
+const isCommentDialogVisible = ref(false);
+const selectedPostId = ref<number | null>(null);
 const router = useRouter();
 
 const posts = ref([
   {
-    id: 1, // Add unique ID for default posts
+    id: 1,
     title: 'Amazing Landscape',
     content: 'Check out this beautiful landscape!',
     mediaUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBpIKuCzK9AxZZkrdE5Fr_m4dKr1aPavnK6w&s',
@@ -112,17 +118,17 @@ const posts = ref([
     comments: ['Stunning view!']
   },
   {
-    id: 2, // Add unique ID for default posts
+    id: 2,
     title: 'Incredible Video',
     content: 'Watch this amazing video!',
-    mediaUrl: 'https://youtu.be/tt2k8PGm-TI', // Updated URL
+    mediaUrl: 'https://youtu.be/tt2k8PGm-TI',
     type: 'video',
     liked: false,
     likes: 25,
     comments: ['Wow, impressive!']
   },
   {
-    id: 3, // Add unique ID for default posts
+    id: 3,
     title: 'Another Beautiful Image',
     content: 'Another image to admire!',
     mediaUrl: 'https://miro.medium.com/v2/resize:fit:1200/1*udvSMrSVGOgD4fxjMJHbOw.jpeg',
@@ -133,27 +139,24 @@ const posts = ref([
   }
 ]);
 
-const openCommentDialog = (post: { id: number; }) => {
-  const dialog = document.getElementById('commentDialog');
-  if (dialog) {
-    dialog.showModal();
-    dialog.dataset.postId = post.id.toString();
-  }
+const getYouTubeEmbedUrl = (url: string) => {
+  return url.replace('youtu.be/', 'https://www.youtube.com/embed/');
+};
+
+const openCommentDialog = (post: { id: number }) => {
+  selectedPostId.value = post.id;
+  isCommentDialogVisible.value = true;
 };
 
 const closeCommentDialog = () => {
-  const dialog = document.getElementById('commentDialog');
-  if (dialog) {
-    dialog.close();
-    newComment.value = '';
-  }
+  isCommentDialogVisible.value = false;
+  newComment.value = '';
+  selectedPostId.value = null;
 };
 
 const addComment = () => {
-  const dialog = document.getElementById('commentDialog');
-  const postId = dialog ? dialog.dataset.postId : null;
-  if (postId && newComment.value) {
-    const post = posts.value.find(p => p.id === parseInt(postId));
+  if (selectedPostId.value !== null && newComment.value.trim() !== '') {
+    const post = posts.value.find(p => p.id === selectedPostId.value);
     if (post) {
       post.comments.push(newComment.value);
     }
@@ -161,7 +164,7 @@ const addComment = () => {
   }
 };
 
-const toggleLike = (post: { liked: boolean; likes: number; id: number; }) => {
+const toggleLike = (post: { liked: boolean; likes: number }) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
 };
