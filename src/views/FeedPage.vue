@@ -1,37 +1,37 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
-    <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-2xl space-y-4">
-      <h2 class="text-3xl font-extrabold text-blue-600 mb-6 text-center drop-shadow-lg">
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
+    <div class="w-full max-w-2xl bg-white p-6 rounded-lg shadow-sm">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
         <span class="pi pi-linkedin mr-2" style="font-size:1.7rem;"></span>Feed
       </h2>
 
-      <div class="flex justify-between mb-4">
+      <div class="flex justify-between mb-6">
         <button
           @click="navigateToCreatePost"
-          class="bg-yellow-500 text-black font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300"
+          class="bg-blue-600 text-white font-medium py-2 px-6 rounded focus:outline-none hover:bg-blue-700"
         >
-          <span class="pi pi-tag mr-2"></span>Create Post
+          <span class="pi pi-pencil mr-2"></span>Create Post
         </button>
         <button
           @click="navigateToProfile"
-          class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          class="bg-white border border-gray-300 text-gray-700 font-medium py-2 px-6 rounded focus:outline-none hover:bg-gray-100"
         >
           <span class="pi pi-user mr-2"></span>Profile
         </button>
       </div>
 
-      <div v-if="posts.length === 0" class="text-center text-gray-600">
+      <div v-if="posts.length === 0" class="text-center text-gray-500">
         No posts yet.
       </div>
 
       <div v-else class="space-y-4">
-        <div v-for="(post, index) in posts.slice().reverse()" :key="index" class="bg-gray-100 border border-gray-300 p-4 rounded-lg shadow">
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ post.title }}</h3>
+        <div v-for="(post, index) in posts.slice().reverse()" :key="index" class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ post.title }}</h3>
+
           <div v-if="post.type === 'image'" class="mb-2">
             <img :src="post.mediaUrl" alt="Post media" class="w-full h-auto rounded-lg">
           </div>
           <div v-if="post.type === 'video'" class="mb-2">
-            <!-- Check if mediaUrl contains 'youtube.com' -->
             <template v-if="post.mediaUrl.includes('youtu.be')">
               <iframe
                 :src="getYouTubeEmbedUrl(post.mediaUrl)"
@@ -41,7 +41,6 @@
                 class="w-full h-auto rounded-lg"
               ></iframe>
             </template>
-            <!-- Else use direct video URL -->
             <template v-else>
               <video controls class="w-full h-auto rounded-lg">
                 <source :src="post.mediaUrl" type="video/mp4">
@@ -50,28 +49,28 @@
             </template>
           </div>
 
-          <p class="text-gray-600">{{ post.content }}</p>
+          <p class="text-gray-700">{{ post.content }}</p>
 
-          <hr class="my-4 border-gray-300" />
+          <hr class="my-4 border-gray-200" />
 
-          <div class="flex justify-between items-center">
-            <div class="flex items-center">
+          <div class="flex justify-between items-center text-gray-500">
+            <div class="flex items-center space-x-2">
               <i
-                :class="post.liked ? 'pi pi-thumbs-up-fill text-blue-500' : 'pi pi-thumbs-up text-gray-500'"
+                :class="post.liked ? 'pi pi-thumbs-up-fill text-blue-500' : 'pi pi-thumbs-up'"
                 @click="toggleLike(post)"
                 class="cursor-pointer"
               ></i>
-              <span class="ml-2">{{ post.likes }}</span>
+              <span>{{ post.likes }}</span>
             </div>
-            <div class="flex items-center">
-              <i class="pi pi-comment text-gray-500 cursor-pointer" @click="openCommentDialog(post)"></i>
-              <span class="ml-2">{{ post.comments.length }}</span>
+            <div class="flex items-center space-x-2">
+              <i class="pi pi-comment cursor-pointer" @click="openCommentDialog(post)"></i>
+              <span>{{ post.comments.length }}</span>
             </div>
           </div>
 
-          <div v-if="post.comments.length > 0" class="mt-4 border-t border-gray-300 pt-4">
-            <div v-for="(comment, idx) in post.comments" :key="idx" class="p-2 bg-gray-200 rounded mb-2">
-              <p class="text-gray-700">{{ comment }}</p>
+          <div v-if="post.comments.length > 0" class="mt-4 border-t border-gray-200 pt-4">
+            <div v-for="(comment, idx) in post.comments" :key="idx" class="p-2 bg-gray-100 rounded mb-2">
+              <p class="text-gray-600">{{ comment }}</p>
             </div>
           </div>
         </div>
@@ -80,13 +79,13 @@
 
     <div v-if="isCommentDialogVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white rounded-lg p-4 shadow-lg w-full max-w-md">
-        <h3 class="text-xl font-semibold mb-4">Add Comment</h3>
+        <h3 class="text-lg font-semibold mb-4">Add Comment</h3>
         <textarea v-model="newComment" rows="4" class="w-full p-2 border rounded mb-4" placeholder="Type your comment here..."></textarea>
         <div class="flex justify-end">
-          <button @click="addComment" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+          <button @click="addComment" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
             Add Comment
           </button>
-          <button @click="closeCommentDialog" class="ml-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400">
+          <button @click="closeCommentDialog" class="ml-2 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">
             Cancel
           </button>
         </div>
@@ -186,5 +185,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Additional styling */
+/* Updated styling for a more LinkedIn-like appearance */
 </style>
