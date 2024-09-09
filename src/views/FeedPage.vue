@@ -1,6 +1,25 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
-    <div class="w-full max-w-2xl bg-white p-6 rounded-lg shadow-sm">
+  <div class="flex flex-col lg:flex-row items-start justify-center min-h-screen bg-gray-100 p-8">
+    <!-- Left Sidebar -->
+    <div class="lg:w-1/4 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:mr-4 mb-4 lg:mb-0">
+      <div class="mb-4">
+        <img src="https://via.placeholder.com/100" alt="Profile Photo" class="w-24 h-24 rounded-full mb-2 mx-auto">
+        <h2 class="text-xl font-semibold text-gray-800 text-center">Syed Adeel Ashraf</h2>
+        <p class="text-center text-gray-600">React Native || React.js || Javascript || Typescript || Node.js || Express.js || mongoDB || SQL || MERN Stack || API || Redux || Developer</p>
+      </div>
+      <div class="mb-4">
+        <p class="font-semibold text-gray-800">Profile viewers</p>
+        <p class="text-gray-600">43</p>
+        <p class="font-semibold text-gray-800">Post impressions</p>
+        <p class="text-gray-600">9</p>
+      </div>
+      <button class="bg-blue-600 text-white font-medium py-2 px-4 rounded w-full mb-4 hover:bg-blue-700">Access exclusive tools & insights</button>
+      <button class="bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded w-full hover:bg-gray-400">Saved items</button>
+    </div>
+
+
+    <!-- Main Feed -->
+    <div class="lg:w-3/4 w-full bg-white p-6 rounded-lg shadow-sm">
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
         <span class="pi pi-linkedin mr-2" style="font-size:1.7rem;"></span>Feed
       </h2>
@@ -63,32 +82,40 @@
               <span>{{ post.likes }}</span>
             </div>
             <div class="flex items-center space-x-2">
-              <i class="pi pi-comment cursor-pointer" @click="openCommentDialog(post)"></i>
+              <i class="pi pi-comment cursor-pointer" @click="toggleCommentSection(post)"></i>
               <span>{{ post.comments.length }}</span>
             </div>
           </div>
 
-          <div v-if="post.comments.length > 0" class="mt-4 border-t border-gray-200 pt-4">
-            <div v-for="(comment, idx) in post.comments" :key="idx" class="p-2 bg-gray-100 rounded mb-2">
-              <p class="text-gray-600">{{ comment }}</p>
+          <!-- Comment Section -->
+          <div v-if="post.isCommentSectionVisible" class="mt-4 border-t border-gray-200 pt-4">
+            <textarea v-model="post.newComment" rows="2" class="w-full p-2 border rounded mb-4" placeholder="Type your comment here..."></textarea>
+            <button @click="addComment(post)" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+              Add Comment
+            </button>
+            <div v-if="post.comments.length > 0" class="mt-4">
+              <div v-for="(comment, idx) in post.comments" :key="idx" class="p-2 bg-gray-100 rounded mb-2">
+                <p class="text-gray-600">{{ comment }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-if="isCommentDialogVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white rounded-lg p-4 shadow-lg w-full max-w-md">
-        <h3 class="text-lg font-semibold mb-4">Add Comment</h3>
-        <textarea v-model="newComment" rows="4" class="w-full p-2 border rounded mb-4" placeholder="Type your comment here..."></textarea>
-        <div class="flex justify-end">
-          <button @click="addComment" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
-            Add Comment
-          </button>
-          <button @click="closeCommentDialog" class="ml-2 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">
-            Cancel
-          </button>
-        </div>
+     <!-- Right Sidebar -->
+     <div class="lg:w-1/4 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:ml-4">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Recent</h3>
+        <ul class="list-disc pl-5">
+          <li><a href="#" class="text-blue-600 hover:underline">Groups</a></li>
+          <li><a href="#" class="text-blue-600 hover:underline">Events</a></li>
+          <li><a href="#" class="text-blue-600 hover:underline">Followed Hashtags</a></li>
+        </ul>
+      </div>
+      <div>
+        <a href="#" class="text-blue-600 hover:underline">See all Followed Hashtags</a>
+        <p class="text-gray-600">Discover more</p>
       </div>
     </div>
   </div>
@@ -100,9 +127,6 @@ import { useRouter } from 'vue-router';
 import { useStore } from '../store';
 
 const store = useStore();
-const newComment = ref('');
-const isCommentDialogVisible = ref(false);
-const selectedPostId = ref<number | null>(null);
 const router = useRouter();
 
 const posts = ref([
@@ -114,7 +138,9 @@ const posts = ref([
     type: 'image',
     liked: false,
     likes: 10,
-    comments: ['Stunning view!']
+    comments: ['Stunning view!'],
+    newComment: '',
+    isCommentSectionVisible: false
   },
   {
     id: 2,
@@ -124,7 +150,9 @@ const posts = ref([
     type: 'video',
     liked: false,
     likes: 25,
-    comments: ['Wow, impressive!']
+    comments: ['Wow, impressive!'],
+    newComment: '',
+    isCommentSectionVisible: false
   },
   {
     id: 3,
@@ -134,7 +162,9 @@ const posts = ref([
     type: 'image',
     liked: false,
     likes: 5,
-    comments: []
+    comments: [],
+    newComment: '',
+    isCommentSectionVisible: false
   }
 ]);
 
@@ -142,30 +172,20 @@ const getYouTubeEmbedUrl = (url: string) => {
   return url.replace('youtu.be/', 'https://www.youtube.com/embed/');
 };
 
-const openCommentDialog = (post: { id: number }) => {
-  selectedPostId.value = post.id;
-  isCommentDialogVisible.value = true;
-};
-
-const closeCommentDialog = () => {
-  isCommentDialogVisible.value = false;
-  newComment.value = '';
-  selectedPostId.value = null;
-};
-
-const addComment = () => {
-  if (selectedPostId.value !== null && newComment.value.trim() !== '') {
-    const post = posts.value.find(p => p.id === selectedPostId.value);
-    if (post) {
-      post.comments.push(newComment.value);
-    }
-    closeCommentDialog();
-  }
-};
-
 const toggleLike = (post: { liked: boolean; likes: number }) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
+};
+
+const toggleCommentSection = (post: { id: number; isCommentSectionVisible: boolean }) => {
+  post.isCommentSectionVisible = !post.isCommentSectionVisible;
+};
+
+const addComment = (post: { id: number; comments: string[]; newComment: string }) => {
+  if (post.newComment.trim() !== '') {
+    post.comments.push(post.newComment);
+    post.newComment = '';
+  }
 };
 
 const navigateToCreatePost = () => {
@@ -185,5 +205,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Updated styling for a more LinkedIn-like appearance */
+/* Tailwind CSS classes handle most of the styling */
 </style>
