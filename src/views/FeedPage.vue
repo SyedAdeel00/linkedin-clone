@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col lg:flex-row items-start justify-center min-h-screen bg-gray-100 p-8">
     <!-- Left Sidebar -->
-    <div class="lg:w-1/4 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:mr-4 mb-4 lg:mb-0">
+    <div class="lg:w-1/6 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:mr-4 mb-4 lg:mb-0">
       <div class="mb-4">
         <img src="https://via.placeholder.com/100" alt="Profile Photo" class="w-24 h-24 rounded-full mb-2 mx-auto">
         <h2 class="text-xl font-semibold text-gray-800 text-center">Syed Adeel Ashraf</h2>
@@ -19,7 +19,7 @@
 
 
     <!-- Main Feed -->
-    <div class="lg:w-3/4 w-full bg-white p-6 rounded-lg shadow-sm">
+    <div class="lg:w-2/6 w-full bg-white p-6 rounded-lg shadow-sm">
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
         <span class="pi pi-linkedin mr-2" style="font-size:1.7rem;"></span>Feed
       </h2>
@@ -104,7 +104,7 @@
     </div>
 
      <!-- Right Sidebar -->
-     <div class="lg:w-1/4 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:ml-4">
+     <div class="lg:w-1/6 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:ml-4">
       <div class="mb-4">
         <h3 class="text-lg font-semibold text-gray-800">Recent</h3>
         <ul class="list-disc pl-5">
@@ -168,10 +168,6 @@ const posts = ref([
   }
 ]);
 
-const getYouTubeEmbedUrl = (url: string) => {
-  return url.replace('youtu.be/', 'https://www.youtube.com/embed/');
-};
-
 const toggleLike = (post: { liked: boolean; likes: number }) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
@@ -202,6 +198,11 @@ onMounted(async () => {
     posts.value = [...posts.value, ...fetchedPosts];
   }
 });
+
+
+function getYouTubeEmbedUrl(url) {
+  return url.replace('youtu.be', 'youtube.com/embed');
+}
 </script>
 
 <style scoped>
