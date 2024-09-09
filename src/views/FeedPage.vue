@@ -138,7 +138,20 @@ import { useStore } from '../store';
 const store = useStore();
 const router = useRouter();
 
-const posts = ref([
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  mediaUrl: string;
+  type: string;
+  liked: boolean;
+  likes: number;
+  comments: string[];
+  newComment: string;
+  isCommentSectionVisible: boolean;
+}
+
+const posts = ref<Post[]>([
   {
     id: 1,
     title: 'Amazing Landscape',
@@ -177,30 +190,29 @@ const posts = ref([
   }
 ]);
 
-const toggleLike = (post: { liked: boolean; likes: number }) => {
+const toggleLike = (post: Post) => {
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
 };
 
-const toggleCommentSection = (post: { id: number; isCommentSectionVisible: boolean }) => {
+const toggleCommentSection = (post: Post) => {
   post.isCommentSectionVisible = !post.isCommentSectionVisible;
 };
 
-const addComment = (post: { id: number; comments: string[]; newComment: string }) => {
+const addComment = (post: Post) => {
   if (post.newComment.trim() !== '') {
     post.comments.push(post.newComment);
     post.newComment = '';
   }
 };
 
-const sharePost = (post: { id: number }) => {
+const sharePost = (post: Post) => {
   alert(`Shared post ${post.id}`);
 };
 
-const repost = (post: { id: number }) => {
+const repost = (post: Post) => {
   alert(`Reposted post ${post.id}`);
 };
-
 
 const navigateToCreatePost = () => {
   router.push('/create-post');
@@ -211,17 +223,23 @@ const navigateToProfile = () => {
 };
 
 onMounted(async () => {
-  const fetchedPosts = await store.fetchPosts();
-  if (fetchedPosts) {
-    posts.value = [...posts.value, ...fetchedPosts];
+  try {
+    const fetchedPosts = await store.fetchPosts();
+    if (fetchedPosts) {
+      posts.value = [...posts.value, ...fetchedPosts];
+    }
+  } catch (error) {
+    console.error('Error fetching posts:', error);
   }
 });
 
 
-function getYouTubeEmbedUrl(url) {
+
+function getYouTubeEmbedUrl(url: string): string {
   return url.replace('youtu.be', 'youtube.com/embed');
 }
 </script>
+
 
 <style scoped>
 /* Add custom styles here */

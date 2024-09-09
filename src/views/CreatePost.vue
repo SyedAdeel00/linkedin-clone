@@ -100,9 +100,13 @@ const createPost = async () => {
     id: Date.now(),
     title: title.value,
     content: content.value,
-    visibility: visibility.value,
+    mediaUrl: '', // Provide a default or empty value
+    type: '', // Provide a default or empty value
+    liked: false, // Provide a default value
     likes: 0,
     comments: [],
+    newComment: '', // Provide a default or empty value
+    isCommentSectionVisible: false // Provide a default value
   };
 
   // Use the store's createPost method
@@ -114,6 +118,7 @@ const createPost = async () => {
   visibility.value = 'public';
   router.push('/feed');
 };
+
 
 const cancel = () => {
   router.push('/feed');

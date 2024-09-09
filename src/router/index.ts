@@ -1,5 +1,3 @@
-// src/router/index.ts
-
 import { createRouter, createWebHistory } from 'vue-router';
 import { useStore } from '../store';
 import FeedPage from '../views/FeedPage.vue';
@@ -20,7 +18,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const store = useStore();
   if (to.meta.requiresAuth && !store.user) {
     next('/login');
