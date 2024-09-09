@@ -17,7 +17,6 @@
       <button class="bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded w-full hover:bg-gray-400">Saved items</button>
     </div>
 
-
     <!-- Main Feed -->
     <div class="lg:w-2/6 w-full bg-white p-6 rounded-lg shadow-sm">
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
@@ -85,6 +84,16 @@
               <i class="pi pi-comment cursor-pointer" @click="toggleCommentSection(post)"></i>
               <span>{{ post.comments.length }}</span>
             </div>
+            <div class="flex items-center space-x-2">
+              <!-- Share Button -->
+              <i class="pi pi-share-alt cursor-pointer" @click="sharePost(post)"></i>
+              <span>Share</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <!-- Repost Button -->
+              <i class="pi pi-repost cursor-pointer" @click="repost(post)"></i>
+              <span>Repost</span>
+            </div>
           </div>
 
           <!-- Comment Section -->
@@ -103,8 +112,8 @@
       </div>
     </div>
 
-     <!-- Right Sidebar -->
-     <div class="lg:w-1/6 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:ml-4">
+    <!-- Right Sidebar -->
+    <div class="lg:w-1/6 w-full lg:max-w-xs bg-white p-4 rounded-lg shadow-sm lg:ml-4">
       <div class="mb-4">
         <h3 class="text-lg font-semibold text-gray-800">Recent</h3>
         <ul class="list-disc pl-5">
@@ -184,6 +193,15 @@ const addComment = (post: { id: number; comments: string[]; newComment: string }
   }
 };
 
+const sharePost = (post: { id: number }) => {
+  alert(`Shared post ${post.id}`);
+};
+
+const repost = (post: { id: number }) => {
+  alert(`Reposted post ${post.id}`);
+};
+
+
 const navigateToCreatePost = () => {
   router.push('/create-post');
 };
@@ -206,5 +224,5 @@ function getYouTubeEmbedUrl(url) {
 </script>
 
 <style scoped>
-/* Tailwind CSS classes handle most of the styling */
+/* Add custom styles here */
 </style>
