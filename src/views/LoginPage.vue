@@ -1,100 +1,167 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
-    <div class="w-full max-w-sm bg-white p-8 rounded-xl shadow-2xl transform hover:scale-105 transition-transform">
-      <h2 class="text-3xl font-extrabold text-blue-500 mb-6 text-center drop-shadow-lg">
-        Login<span class="pi pi-user ml-2 " style="font-size: 1.7rem"></span>
-      </h2>
-      <form @submit.prevent="requestOtp" class="space-y-6">
-        <input
-          v-model="phone"
-          @input="handlePhoneInputChange"
-          type="tel"
-          placeholder="Phone Number"
-          required
-          maxlength = 10
-          minlength=10
-          class="w-full px-4 py-3 border border-red-300 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-yellow-400"
-        />
-        <button
-          type="submit"
-          :disabled="otpRequested && !phoneChanged"
-          class="w-full bg-yellow-500 text-black font-semibold py-3 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          Request OTP
-        </button>
-      </form>
-      <div v-if="otpRequested" class="mt-8">
-        <form @submit.prevent="verifyOtp" class="space-y-6">
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div class="absolute top-4 left-4 flex items-center">
+      <span class="text-blue-700 font-bold text-2xl">LinkedIn</span>
+      <i class="pi pi-linkedin ml-1" style="font-size: 1.7rem; color: blue;"></i>
+</div>
+
+
+    <div class="w-full max-w-md bg-white p-7 rounded-lg shadow-md">
+      <h1 class="text-3xl font-bold text-black-700 mb-2 text-left">Sign in</h1>
+      <p class="text-gray-600 text-left mb-6">Stay updated on your professional world.</p>
+
+      <form @submit.prevent="handleSubmit">
+        <!-- Email or Phone Input -->
+        <div class="mb-4">
+          <label for="emailOrPhone" class="block text-gray-700 font-semibold mb-2">Email or phone</label>
+          <input
+            type="text"
+            v-model="form.emailOrPhone"
+            id="emailOrPhone"
+            placeholder="Enter your email or phone"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :class="{ 'border-red-500': errors.emailOrPhone }"
+            @input="validatePhone"
+          />
+          <p v-if="errors.emailOrPhone" class="text-red-500 text-sm mt-1">{{ errors.emailOrPhone }}</p>
+        </div>
+
+        <!-- Password Input -->
+        <div class="mb-4">
+          <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
           <div class="relative">
             <input
-              v-model="otp"
-              :type="otpInputType"
-              placeholder="Enter OTP"
-              required
-               maxlength = 4
-               minlength=4
-              class="w-full px-4 py-3 border border-gray-400 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-400"
+              :type="showPassword ? 'text' : 'password'"
+              v-model="form.password"
+              id="password"
+              placeholder="Enter your password"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :class="{ 'border-red-500': errors.password }"
             />
-            <span @click="toggleOtpVisibility" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700 cursor-pointer">
-              <i :class="otpVisible ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" @click="togglePasswordVisibility">
+              <i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
             </span>
           </div>
-          <button
-            type="submit"
-            class="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
-          >
-            Login
-          </button>
-        </form>
+          <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div class="flex justify-start mb-4">
+          <a href="#" class="text-blue-600 font-semibold text-sm">Forgot password?</a>
+        </div>
+
+        <!-- Sign In Button -->
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+        >
+          Sign in
+        </button>
+      </form>
+
+      <div class="flex items-center justify-center my-4">
+        <hr class="w-full border-gray-300" />
+        <span class="px-2 text-gray-500">or</span>
+        <hr class="w-full border-gray-300" />
+      </div>
+
+      <div class="mt-8 text-sm text-center text-gray-600 mb-3">
+        By clicking Sign in, you agree to LinkedIn’s <a href="#" class="text-blue-600">User Agreement</a>, <a href="#" class="text-blue-600">Privacy Policy</a>, and <a href="#" class="text-blue-600">Cookie Policy</a>.
+      </div>
+
+
+      <!-- Sign In with Google Button -->
+       <button class="w-full bg-white border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg mb-4 hover:border-black flex items-center justify-center">
+        <i class="pi pi-google mr-3" style="font-size: 1.5rem; color:green;"></i>
+        Continue with Google
+       </button>
+
+      <!-- Sign In with Apple Button -->
+       <button class="w-full bg-white border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg mb-6 hover:border-black flex items-center justify-center">
+        <i class="pi pi-apple mr-3" style="font-size: 1.7rem; color: black;"></i>
+        Sign in with Apple
+       </button>
+
+    </div>
+
+     <!-- Join Now Link -->
+     <p class="text-center text-gray-600 mt-6">
+        New to LinkedIn? <a href="#" class="text-blue-600 font-semibold">Join now</a>
+      </p>
+
+    <!-- Footer Section -->
+    <div class="mt-8 text-center text-sm text-gray-600">
+      <div class="flex justify-center space-x-4 mt-4">
+        <a href="#" class="text-gray-600">  LinkedIn      <i class="pi pi-linkedin" style="font-size: 1rem; color: black;"></i>
+          ©2024</a>
+        <a href="#" class="text-gray-600">User Agreement</a>
+        <a href="#" class="text-gray-600">Privacy Policy</a>
+        <a href="#" class="text-gray-600">Community Guidelines</a>
+        <a href="#" class="text-gray-600">Cookie Policy</a>
+        <a href="#" class="text-gray-600">Copyright Policy</a>
+        <a href="#" class="text-gray-600">Send Feedback</a>
+        <a href="#" class="text-gray-600">Language</a>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed } from 'vue'; 
-import { useStore } from '../store';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from '../store';
 
-const phone = ref('');
-const otp = ref('');
-const otpRequested = ref(false);
-const otpVisible = ref(false);
-const phoneChanged = ref(false);
-
-const store = useStore();
 const router = useRouter();
+const store = useStore();
 
-// Toggle OTP visibility
-const toggleOtpVisibility = () => {
-  otpVisible.value = !otpVisible.value;
+const form = ref({
+  emailOrPhone: '',
+  password: ''
+});
+
+const errors = ref({
+  emailOrPhone: '',
+  password: ''
+});
+
+const showPassword = ref(false);
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
 };
 
-const otpInputType = computed(() => otpVisible.value ? 'text' : 'password');
-
-// Handle phone input change
-const handlePhoneInputChange = () => {
-  phoneChanged.value = true;
-  otpRequested.value = false; // Reset OTP requested state when phone number changes
+const validatePhone = () => {
+  if (!/^\d*$/.test(form.value.emailOrPhone)) {
+    form.value.emailOrPhone = form.value.emailOrPhone.replace(/\D/g, ''); // Only allow numbers
+  }
 };
 
-const requestOtp = () => {
-  alert('OTP has been sent to your phone');
-  otpRequested.value = true;
-  phoneChanged.value = false; // Once OTP is requested, disable unless phone changes
+const validateForm = () => {
+  errors.value.emailOrPhone = '';
+  errors.value.password = '';
+
+  if (!form.value.emailOrPhone) {
+    errors.value.emailOrPhone = 'Email or phone is required.';
+  }
+
+  if (!form.value.password) {
+    errors.value.password = 'Password is required.';
+  } else if (form.value.password !== '1234') { // Password validation
+    errors.value.password = 'Incorrect password.';
+  }
 };
 
-const verifyOtp = async () => {
-  if (otp.value === '1234') { // Simulated OTP check
-    store.login(phone.value);
-    await nextTick(); // Ensure the login state is updated before navigating
-    router.push('/feed');
-  } else {
-    alert('Invalid OTP');
+const handleSubmit = async () => {
+  validateForm();
+
+  if (!errors.value.emailOrPhone && !errors.value.password) {
+    // Simulate successful login
+    store.login(form.value.emailOrPhone); // Update store with logged in user
+    try {
+      await router.push('/feed');
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
   }
 };
 </script>
-
-<style scoped>
-/* Additional styling can be added here */
-</style>
